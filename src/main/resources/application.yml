@@ -1,0 +1,4 @@
+bootstrap:
+  servers: localhost:9092
+topic-person: pessoa
+topic-person-string: pessoa_string
