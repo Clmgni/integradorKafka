@@ -22,14 +22,19 @@ fun main(args: Array<String>) {
 	var teste1 = teste("xxx",1)
 	var teste2 = teste2()
 	println(teste2)
+
 	//Dados
 	var cliente1 = listOf("Aaa","1","desc1")
 	var cliente2 = listOf("Baa","2","desc2")
 	var cliente3 = listOf("Caa","3","desc3")
 	var clientes = listOf(cliente1,cliente2,cliente3)
 
-	var teste = writeToExcelFile("e:/planilhateste.xlsx",clientes)
-	println(teste)
+	//Cria Planilha
+	writeToExcelFile("e:/planilhateste.xlsx",clientes)
+
+	//Le planilha
+	readFromExcelFile("e:/planilhateste.xlsx")
+
 }
 
 /**
@@ -91,8 +96,29 @@ fun readFromExcelFile(filepath: String) {
 	val columnNumber = 0
 
 	//Get reference to first sheet:
+
 	val xlWs = xlWb.getSheetAt(0)
-	println(xlWs.getRow(rowNumber).getCell(columnNumber))
+
+	//Dimensoes da Planilha
+	var ultimaLinha = xlWs.lastRowNum
+	var linhaPlan=0
+	var colunaPlan: Int
+	var colunas = (xlWs.getRow(0).lastCellNum) - 1
+
+	println("Possui " + ultimaLinha + " linhas e " + colunas + " colunas!")
+	println("\n")
+
+	//Lista Dados
+	while ( linhaPlan <= ultimaLinha) {
+		colunaPlan=0
+		while (colunaPlan <=colunas) {
+			print(xlWs.getRow(linhaPlan).getCell(colunaPlan))
+			print("\t")
+			colunaPlan++
+		}
+		print("\n")
+		linhaPlan++
+	}
 }
 
 
