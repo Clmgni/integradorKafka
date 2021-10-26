@@ -43,10 +43,10 @@ fun writeToExcelFile(filepath: String, dados: Any) {
 	val xlWs = xlWb.createSheet()
 
 	//Dados
-	var cliente1 = listOf("Aaa","1","desc1")
-	var cliente2 = listOf("Baa","2","desc2")
-	var cliente3 = listOf("Caa","3","desc3")
-	var clientes = listOf(cliente1,cliente2,cliente3)
+	var linha1 = listOf("Aaa","1","desc1")
+	var linha2 = listOf("Baa","2","desc2")
+	var linha3 = listOf("Caa","3","desc3")
+	var dados = listOf(linha1,linha2,linha3)
 
 	// Monta Header
 	val Linha = xlWs.createRow(0)
@@ -64,11 +64,11 @@ fun writeToExcelFile(filepath: String, dados: Any) {
 	xlWs.setDefaultColumnStyle(3 , isLocked)
 	xlWs.protectSheet("Teste")
 	var rowIdx = 1
-	for (cliente in clientes) {
+	for (linha in dados) {
 		val Linha = xlWs.createRow(rowIdx++)
-		Linha.createCell(0).setCellValue(cliente.get(0))
-		Linha.createCell(1).setCellValue(cliente.get(1))
-		Linha.createCell(2).setCellValue(cliente.get(2))
+		Linha.createCell(0).setCellValue(linha.get(0))
+		Linha.createCell(1).setCellValue(linha.get(1))
+		Linha.createCell(2).setCellValue(linha.get(2))
 	}
 
 	//Grava Arquivo
