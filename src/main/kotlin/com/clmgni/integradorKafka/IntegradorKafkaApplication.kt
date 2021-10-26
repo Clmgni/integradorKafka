@@ -1,10 +1,15 @@
 package com.clmgni.integradorKafka
 
 import org.apache.poi.ss.usermodel.CellStyle
+import org.apache.poi.ss.usermodel.Font
+import org.apache.poi.ss.usermodel.IndexedColors
 import org.apache.poi.ss.usermodel.WorkbookFactory
+import org.apache.poi.xssf.usermodel.XSSFColor
+import org.apache.poi.xssf.usermodel.XSSFFont
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import java.awt.Color
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
@@ -51,6 +56,19 @@ fun writeToExcelFile(filepath: String) {
 	Linha.createCell(2).setCellValue("Descricao")
 	Linha.createCell(3).setCellValue("Status")
 
+	val font: XSSFFont = xlWb.createFont()
+	font.fontHeightInPoints = 10.toShort()
+	font.fontName = "Arial"
+	font.color = IndexedColors.BLUE.getIndex()
+	font.bold = true
+	font.italic = false
+
+//	Linha.rowStyle.font.setColor("Blue")
+
+	//var style=Linha.getRowStyle();
+	//style.setFont(font)
+
+	//Congela primeira linha
 	xlWs.createFreezePane(0, 1);
 	val isLocked: CellStyle = xlWb.createCellStyle()
 	isLocked.locked = false
