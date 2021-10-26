@@ -22,51 +22,38 @@ fun main(args: Array<String>) {
 	var teste1 = teste("xxx",1)
 	var teste2 = teste2()
 	println(teste2)
-	var teste = writeToExcelFile("e:/planilhateste.xlsx")
+	//Dados
+	var cliente1 = listOf("Aaa","1","desc1")
+	var cliente2 = listOf("Baa","2","desc2")
+	var cliente3 = listOf("Caa","3","desc3")
+	var clientes = listOf(cliente1,cliente2,cliente3)
+
+	var teste = writeToExcelFile("e:/planilhateste.xlsx",clientes)
 	println(teste)
 }
 
 /**
- * Writes the value "TEST" to the cell at the first row and first column of worksheet.
+ * GERACAO DE PLANILHA EXCEL
  */
-fun writeToExcelFile(filepath: String) {
-	//Instantiate Excel workbook:
+fun writeToExcelFile(filepath: String, dados: Any) {
+	//Instancia Excel workbook:
 
 	val xlWb = XSSFWorkbook()
-	//Instantiate Excel worksheet:
+	//Instancia aba da planilha Excel
 	val xlWs = xlWb.createSheet()
 
-	//Row index specifies the row in the worksheet (starting at 0):
-	val rowNumber = 0
-	//Cell index specifies the column within the chosen row (starting at 0):
-	val columnNumber = 0
-
-	//Write text value to cell located at ROW_NUMBER / COLUMN_NUMBER:
-
+	//Dados
 	var cliente1 = listOf("Aaa","1","desc1")
 	var cliente2 = listOf("Baa","2","desc2")
 	var cliente3 = listOf("Caa","3","desc3")
-
 	var clientes = listOf(cliente1,cliente2,cliente3)
 
-	//Header
+	// Monta Header
 	val Linha = xlWs.createRow(0)
 	Linha.createCell(0).setCellValue("Nome")
 	Linha.createCell(1).setCellValue("Codigo")
 	Linha.createCell(2).setCellValue("Descricao")
 	Linha.createCell(3).setCellValue("Status")
-
-	val font: XSSFFont = xlWb.createFont()
-	font.fontHeightInPoints = 10.toShort()
-	font.fontName = "Arial"
-	font.color = IndexedColors.BLUE.getIndex()
-	font.bold = true
-	font.italic = false
-
-//	Linha.rowStyle.font.setColor("Blue")
-
-	//var style=Linha.getRowStyle();
-	//style.setFont(font)
 
 	//Congela primeira linha
 	xlWs.createFreezePane(0, 1);
@@ -79,20 +66,19 @@ fun writeToExcelFile(filepath: String) {
 	var rowIdx = 1
 	for (cliente in clientes) {
 		val Linha = xlWs.createRow(rowIdx++)
-
 		Linha.createCell(0).setCellValue(cliente.get(0))
 		Linha.createCell(1).setCellValue(cliente.get(1))
 		Linha.createCell(2).setCellValue(cliente.get(2))
 	}
 
-	//Write file:
+	//Grava Arquivo
 	val outputStream = FileOutputStream(filepath)
 	xlWb.write(outputStream)
 	xlWb.close()
 }
 
 /**
- * Reads the value from the cell at the first row and first column of worksheet.
+ * LEITURA DE PLANILHA
  */
 fun readFromExcelFile(filepath: String) {
 	val inputStream = FileInputStream(filepath)
