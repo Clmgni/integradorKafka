@@ -16,16 +16,16 @@ repositories {
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-validation")
-	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+	implementation("org.springframework.boot:spring-boot-starter-validation:2.5.5")
+	implementation("org.springframework.boot:spring-boot-starter-web:2.5.5")
+	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-	implementation("org.springframework.kafka:spring-kafka")
-	implementation("org.apache.poi:poi:3.17")
-	implementation("org.apache.poi:poi-ooxml:3.17")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.springframework.kafka:spring-kafka-test")
+	implementation("org.springframework.kafka:spring-kafka:2.7.6")
+	implementation("org.apache.poi:poi:5.0.0")
+	implementation("org.apache.poi:poi-ooxml:5.0.0")
+	testImplementation("org.springframework.boot:spring-boot-starter-test:2.5.5")
+	testImplementation("org.springframework.kafka:spring-kafka-test:2.7.6")
 }
 
 tasks.withType<KotlinCompile> {

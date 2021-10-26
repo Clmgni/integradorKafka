@@ -1,5 +1,4 @@
 package com.clmgni.integradorKafka
-
 import org.apache.poi.ss.usermodel.CellStyle
 import org.apache.poi.ss.usermodel.Font
 import org.apache.poi.ss.usermodel.IndexedColors
@@ -13,26 +12,24 @@ import java.awt.Color
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
-
 @SpringBootApplication
 class IntegradorKafkaApplication
 
 fun main(args: Array<String>) {
 	runApplication<IntegradorKafkaApplication>(*args)
-	var teste1 = teste("xxx",1)
-	var teste2 = teste2()
-	println(teste2)
 
-	//Dados
+	//Gera Dados
 	var cliente1 = listOf("Aaa","1","desc1")
 	var cliente2 = listOf("Baa","2","desc2")
 	var cliente3 = listOf("Caa","3","desc3")
 	var clientes = listOf(cliente1,cliente2,cliente3)
 
 	//Cria Planilha
+	println("Gera planilha...")
 	writeToExcelFile("e:/planilhateste.xlsx",clientes)
 
 	//Le planilha
+	println("Le planilha...")
 	readFromExcelFile("e:/planilhateste.xlsx")
 
 }
@@ -48,9 +45,9 @@ fun writeToExcelFile(filepath: String, dados: Any) {
 	val xlWs = xlWb.createSheet()
 
 	//Dados
-	var linha1 = listOf("Aaa","1","desc1")
-	var linha2 = listOf("Baa","2","desc2")
-	var linha3 = listOf("Caa","3","desc3")
+	var linha1 = listOf("Aaaaa","000001","desc1")
+	var linha2 = listOf("Bbbbb","000002","desc2")
+	var linha3 = listOf("Ccccc","000003","desc3")
 	var dados = listOf(linha1,linha2,linha3)
 
 	// Monta Header
@@ -58,7 +55,8 @@ fun writeToExcelFile(filepath: String, dados: Any) {
 	Linha.createCell(0).setCellValue("Nome")
 	Linha.createCell(1).setCellValue("Codigo")
 	Linha.createCell(2).setCellValue("Descricao")
-	Linha.createCell(3).setCellValue("Status")
+	Linha.createCell(3).setCellValue("Data")
+	Linha.createCell(4).setCellValue("Status")
 
 	//Congela primeira linha
 	xlWs.createFreezePane(0, 1);
@@ -119,18 +117,4 @@ fun readFromExcelFile(filepath: String) {
 		print("\n")
 		linhaPlan++
 	}
-}
-
-
-fun teste2(): Any {
-
-	return true
-}
-
-fun teste(campo1: String,campo2: Int): Boolean {
-	var Campo1: String
-	var Campo2: Int
-
-	println("Teste: $campo1 ")
-	return true
 }
