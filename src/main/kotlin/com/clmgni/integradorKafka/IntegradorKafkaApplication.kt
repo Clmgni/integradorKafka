@@ -1,11 +1,13 @@
 package com.clmgni.integradorKafka
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.runApplication
+import org.apache.poi.ss.usermodel.CellStyle
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
 import java.io.FileInputStream
 import java.io.FileOutputStream
+
 
 @SpringBootApplication
 class IntegradorKafkaApplication
@@ -15,7 +17,7 @@ fun main(args: Array<String>) {
 	var teste1 = teste("xxx",1)
 	var teste2 = teste2()
 	println(teste2)
-	var teste = writeToExcelFile("e:/planilhateste.xls")
+	var teste = writeToExcelFile("e:/planilhateste.xlsx")
 	println(teste)
 }
 
@@ -47,7 +49,15 @@ fun writeToExcelFile(filepath: String) {
 	Linha.createCell(0).setCellValue("Nome")
 	Linha.createCell(1).setCellValue("Codigo")
 	Linha.createCell(2).setCellValue("Descricao")
+	Linha.createCell(3).setCellValue("Status")
 
+	xlWs.createFreezePane(0, 1);
+	val isLocked: CellStyle = xlWb.createCellStyle()
+	isLocked.locked = false
+
+	//Permite que a coluna D seja editável
+	xlWs.setDefaultColumnStyle(3 , isLocked)
+	xlWs.protectSheet("Teste")
 	var rowIdx = 1
 	for (cliente in clientes) {
 		val Linha = xlWs.createRow(rowIdx++)
