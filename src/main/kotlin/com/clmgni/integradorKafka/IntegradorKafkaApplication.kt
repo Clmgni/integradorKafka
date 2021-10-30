@@ -49,7 +49,8 @@ fun writeToExcelFile(filepath: String, dados: Any) {
 	var linha1 = listOf("Aaaaa","000001","desc1")
 	var linha2 = listOf("Bbbbb","000002","desc2")
 	var linha3 = listOf("Ccccc","000003","desc3")
-	var dados = listOf(linha1,linha2,linha3)
+	var linha4 = listOf("Ddddd","000004","desc4")
+	var dados = listOf(linha1,linha2,linha3,linha4)
 
 	// Monta Header
 	val Linha = xlWs.createRow(0)
@@ -76,7 +77,6 @@ fun writeToExcelFile(filepath: String, dados: Any) {
 	xlWs.protectSheet("Teste")
 	xlWs2.protectSheet("Teste")
 
-
 	var rowIdx = 1
 	for (linha in dados) {
 		val Linha = xlWs.createRow(rowIdx++)
@@ -89,8 +89,6 @@ fun writeToExcelFile(filepath: String, dados: Any) {
 	var constraint: DataValidationConstraint? = null
 	var validationHelper: DataValidationHelper? = null
 
-
-
 	// Coloca lista suspensa
 	validationHelper = XSSFDataValidationHelper(xlWs)
 	val addressList = CellRangeAddressList(1, rowIdx-1, 3, 3)
@@ -99,8 +97,12 @@ fun writeToExcelFile(filepath: String, dados: Any) {
 	//Opcao via string
 	//constraint = validationHelper.createExplicitListConstraint(arrayOf("SIM", "NAO")
 	dataValidation = validationHelper.createValidation(constraint, addressList)
-	dataValidation.suppressDropDownArrow = true
+	dataValidation.suppressDropDownArrow = true // Mostrar ListBox
+	dataValidation.showErrorBox = true // Mostrar mensagem de erro
+	dataValidation.createErrorBox("Validação dos dados","Este campo deve ser preenchido com 'SIM' ou 'NAO'!")
+	dataValidation.errorStyle = 0 // ERROR=0,WARNING=1,INFO=2
 	xlWs.addValidationData(dataValidation)
+
 
 	//Grava Arquivo
 	val outputStream = FileOutputStream(filepath)
