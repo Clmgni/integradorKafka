@@ -1,16 +1,16 @@
 package com.clmgni.integradorKafka
-import org.apache.poi.ss.usermodel.CellStyle
-import org.apache.poi.ss.usermodel.Font
-import org.apache.poi.ss.usermodel.IndexedColors
-import org.apache.poi.ss.usermodel.WorkbookFactory
-import org.apache.poi.xssf.usermodel.XSSFColor
-import org.apache.poi.xssf.usermodel.XSSFFont
+
+import org.apache.poi.ss.usermodel.*
+import org.apache.poi.ss.util.CellRangeAddressList
+import org.apache.poi.xssf.usermodel.XSSFDataValidation
+import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidation
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import java.awt.Color
 import java.io.FileInputStream
 import java.io.FileOutputStream
+
 
 @SpringBootApplication
 class IntegradorKafkaApplication
@@ -42,7 +42,8 @@ fun writeToExcelFile(filepath: String, dados: Any) {
 
 	val xlWb = XSSFWorkbook()
 	//Instancia aba da planilha Excel
-	val xlWs = xlWb.createSheet()
+	val xlWs = xlWb.createSheet("Transferencias")
+	val xlWs2 = xlWb.createSheet("Opcoes")
 
 	//Dados
 	var linha1 = listOf("Aaaaa","000001","desc1")
@@ -58,14 +59,24 @@ fun writeToExcelFile(filepath: String, dados: Any) {
 	Linha.createCell(3).setCellValue("Data")
 	Linha.createCell(4).setCellValue("Status")
 
+	// Monta dados da Lista Suspensa em outra planilha e a deixa oculta
+	xlWs2.createRow(0).createCell(0).setCellValue("Opcoes")
+	xlWs2.createRow(1).createCell(0).setCellValue("SIM")
+	xlWs2.createRow(2).createCell(0).setCellValue("NAO")
+	xlWb.setSheetHidden(1,true)
+
 	//Congela primeira linha
 	xlWs.createFreezePane(0, 1);
 	val isLocked: CellStyle = xlWb.createCellStyle()
 	isLocked.locked = false
 
-	//Permite que a coluna D seja editável
+	//Permite que a coluna D e E sejam editáveis
 	xlWs.setDefaultColumnStyle(3 , isLocked)
+	xlWs.setDefaultColumnStyle(4 , isLocked)
 	xlWs.protectSheet("Teste")
+	xlWs2.protectSheet("Teste")
+
+
 	var rowIdx = 1
 	for (linha in dados) {
 		val Linha = xlWs.createRow(rowIdx++)
@@ -73,6 +84,23 @@ fun writeToExcelFile(filepath: String, dados: Any) {
 		Linha.createCell(1).setCellValue(linha.get(1))
 		Linha.createCell(2).setCellValue(linha.get(2))
 	}
+
+	var dataValidation: DataValidation? = null
+	var constraint: DataValidationConstraint? = null
+	var validationHelper: DataValidationHelper? = null
+
+
+
+	// Coloca lista suspensa
+	validationHelper = XSSFDataValidationHelper(xlWs)
+	val addressList = CellRangeAddressList(1, rowIdx-1, 3, 3)
+	//Opcao via Planilha auxiliar
+	constraint = validationHelper.createFormulaListConstraint("Opcoes!A$2:A$3")
+	//Opcao via string
+	//constraint = validationHelper.createExplicitListConstraint(arrayOf("SIM", "NAO")
+	dataValidation = validationHelper.createValidation(constraint, addressList)
+	dataValidation.suppressDropDownArrow = true
+	xlWs.addValidationData(dataValidation)
 
 	//Grava Arquivo
 	val outputStream = FileOutputStream(filepath)
