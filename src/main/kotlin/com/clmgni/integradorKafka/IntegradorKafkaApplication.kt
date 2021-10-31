@@ -1,12 +1,8 @@
 package com.clmgni.integradorKafka
 
 import org.apache.poi.ss.usermodel.*
-import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.ss.util.CellRangeAddressList
-import org.apache.poi.xssf.usermodel.XSSFDataValidation
-import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper
-import org.apache.poi.xssf.usermodel.XSSFWorkbook
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidation
+import org.apache.poi.xssf.usermodel.*
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import java.io.FileInputStream
@@ -55,6 +51,21 @@ fun writeToExcelFile(filepath: String, dados: Any) {
 	Linha.createCell(2).setCellValue("DESCRICAO")
 	Linha.createCell(3).setCellValue("DATA")
 	Linha.createCell(4).setCellValue("SUCESSO(SIM/NAO)")
+
+	// Estilo da Célula
+	var style: CellStyle = xlWb.createCellStyle()
+	// Setting Background color
+	style.fillBackgroundColor = IndexedColors.GREEN.getIndex()
+	style.fillPattern = FillPatternType.BIG_SPOTS
+	//val cell: Cell = row.createCell(1)
+	//cell.setCellValue("Javatpoint")
+	//cell.cellStyle = style
+
+	// Setting Foreground Color
+	style = xlWb.createCellStyle()
+	style.fillForegroundColor = IndexedColors.BLUE.getIndex()
+	style.fillPattern = FillPatternType.SOLID_FOREGROUND
+
 
 	// Monta dados da Lista Suspensa em outra planilha e a deixa oculta
 	xlWs2.createRow(0).createCell(0).setCellValue("Opcoes")
