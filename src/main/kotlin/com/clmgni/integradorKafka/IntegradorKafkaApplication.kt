@@ -1,6 +1,7 @@
 package com.clmgni.integradorKafka
 
 import org.apache.poi.ss.usermodel.*
+import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.ss.util.CellRangeAddressList
 import org.apache.poi.xssf.usermodel.XSSFDataValidation
 import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper
@@ -10,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.util.*
 
 
 @SpringBootApplication
@@ -18,15 +20,9 @@ class IntegradorKafkaApplication
 fun main(args: Array<String>) {
 	runApplication<IntegradorKafkaApplication>(*args)
 
-	//Gera Dados
-	var cliente1 = listOf("Aaa","1","desc1")
-	var cliente2 = listOf("Baa","2","desc2")
-	var cliente3 = listOf("Caa","3","desc3")
-	var clientes = listOf(cliente1,cliente2,cliente3)
-
 	//Cria Planilha
 	println("Gera planilha...")
-	writeToExcelFile("e:/planilhateste.xlsx",clientes)
+	writeToExcelFile("e:/planilhateste.xlsx","Informacoes")
 
 	//Le planilha
 	println("Le planilha...")
@@ -46,19 +42,19 @@ fun writeToExcelFile(filepath: String, dados: Any) {
 	val xlWs2 = xlWb.createSheet("Opcoes")
 
 	//Dados
-	var linha1 = listOf("Aaaaa","000001","desc1")
-	var linha2 = listOf("Bbbbb","000002","desc2")
-	var linha3 = listOf("Ccccc","000003","desc3")
-	var linha4 = listOf("Ddddd","000004","desc4")
+	var linha1 = listOf("TED   ","000001","desc1",Date().toString())
+	var linha2 = listOf("TED   ","000002","desc2",Date().toString())
+	var linha3 = listOf("PIX   ","000003","desc3",Date().toString())
+	var linha4 = listOf("PICPAY","000004","desc4",Date().toString())
 	var dados = listOf(linha1,linha2,linha3,linha4)
 
 	// Monta Header
 	val Linha = xlWs.createRow(0)
-	Linha.createCell(0).setCellValue("Nome")
-	Linha.createCell(1).setCellValue("Codigo")
-	Linha.createCell(2).setCellValue("Descricao")
-	Linha.createCell(3).setCellValue("Data")
-	Linha.createCell(4).setCellValue("Status")
+	Linha.createCell(0).setCellValue("PRODUTO")
+	Linha.createCell(1).setCellValue("CODIGO")
+	Linha.createCell(2).setCellValue("DESCRICAO")
+	Linha.createCell(3).setCellValue("DATA")
+	Linha.createCell(4).setCellValue("SUCESSO(SIM/NAO)")
 
 	// Monta dados da Lista Suspensa em outra planilha e a deixa oculta
 	xlWs2.createRow(0).createCell(0).setCellValue("Opcoes")
@@ -72,7 +68,7 @@ fun writeToExcelFile(filepath: String, dados: Any) {
 	isLocked.locked = false
 
 	//Permite que a coluna D e E sejam editáveis
-	xlWs.setDefaultColumnStyle(3 , isLocked)
+	//xlWs.setDefaultColumnStyle(3 , isLocked)
 	xlWs.setDefaultColumnStyle(4 , isLocked)
 	xlWs.protectSheet("Teste")
 	xlWs2.protectSheet("Teste")
@@ -83,6 +79,7 @@ fun writeToExcelFile(filepath: String, dados: Any) {
 		Linha.createCell(0).setCellValue(linha.get(0))
 		Linha.createCell(1).setCellValue(linha.get(1))
 		Linha.createCell(2).setCellValue(linha.get(2))
+		Linha.createCell(3).setCellValue(linha.get(3))
 	}
 
 	var dataValidation: DataValidation? = null
@@ -91,7 +88,7 @@ fun writeToExcelFile(filepath: String, dados: Any) {
 
 	// Coloca lista suspensa
 	validationHelper = XSSFDataValidationHelper(xlWs)
-	val addressList = CellRangeAddressList(1, rowIdx-1, 3, 3)
+	val addressList = CellRangeAddressList(1, rowIdx-1, 4, 4)
 	//Opcao via Planilha auxiliar
 	constraint = validationHelper.createFormulaListConstraint("Opcoes!A$2:A$3")
 	//Opcao via string
@@ -102,6 +99,16 @@ fun writeToExcelFile(filepath: String, dados: Any) {
 	dataValidation.createErrorBox("Validação dos dados","Este campo deve ser preenchido com 'SIM' ou 'NAO'!")
 	dataValidation.errorStyle = 0 // ERROR=0,WARNING=1,INFO=2
 	xlWs.addValidationData(dataValidation)
+
+	// Auto ajuste das colunas
+	xlWs.autoSizeColumn(0)
+	xlWs.autoSizeColumn(1)
+	xlWs.autoSizeColumn(2)
+	xlWs.autoSizeColumn(3)
+	xlWs.autoSizeColumn(4)
+
+	// Auto filtro
+	//xlWs.setAutoFilter(CellRangeAddress(0,rowIdx-1,0,4))
 
 
 	//Grava Arquivo
