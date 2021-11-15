@@ -1,10 +1,20 @@
 package com.clmgni.integradorKafka
 
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey
+import org.apache.poi.openxml4j.opc.OPCPackage
+import org.apache.poi.openxml4j.opc.PackageAccess
+import org.apache.poi.poifs.crypt.EncryptionInfo
+import org.apache.poi.poifs.crypt.EncryptionMode
+import org.apache.poi.poifs.crypt.Encryptor
+import org.apache.poi.poifs.filesystem.POIFSFileSystem
 import org.apache.poi.ss.usermodel.*
+import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.ss.util.CellRangeAddressList
-import org.apache.poi.xssf.usermodel.*
+import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.*
@@ -33,6 +43,8 @@ fun writeToExcelFile(filepath: String, dados: Any) {
 	//Instancia Excel workbook:
 
 	val xlWb = XSSFWorkbook()
+	Biff8EncryptionKey.setCurrentUserPassword("userpass")
+
 	//Instancia aba da planilha Excel
 	val xlWs = xlWb.createSheet("Transferencias")
 	val xlWs2 = xlWb.createSheet("Opcoes")
@@ -57,9 +69,6 @@ fun writeToExcelFile(filepath: String, dados: Any) {
 	// Setting Background color
 	style.fillBackgroundColor = IndexedColors.GREEN.getIndex()
 	style.fillPattern = FillPatternType.BIG_SPOTS
-	//val cell: Cell = row.createCell(1)
-	//cell.setCellValue("Javatpoint")
-	//cell.cellStyle = style
 
 	// Setting Foreground Color
 	style = xlWb.createCellStyle()
@@ -83,6 +92,11 @@ fun writeToExcelFile(filepath: String, dados: Any) {
 	xlWs.setDefaultColumnStyle(4 , isLocked)
 	xlWs.protectSheet("Teste")
 	xlWs2.protectSheet("Teste")
+
+	//Protege Workbook
+	xlWb.lockStructure()
+//	xlWb.setWorkbookPassword("teste123",HashAlgorithm.sha512)
+
 
 	var rowIdx = 1
 	for (linha in dados) {
@@ -119,13 +133,37 @@ fun writeToExcelFile(filepath: String, dados: Any) {
 	xlWs.autoSizeColumn(4)
 
 	// Auto filtro
-	//xlWs.setAutoFilter(CellRangeAddress(0,rowIdx-1,0,4))
+	xlWs.setAutoFilter(CellRangeAddress(0,rowIdx-1,0,4))
 
 
 	//Grava Arquivo
-	val outputStream = FileOutputStream(filepath)
-	xlWb.write(outputStream)
+	//val outputStream = FileOutputStream(filepath)
+	//xlWb.write(outputStream)
+
+	val xlsxFile = File(filepath)
+
+	//Biff8EncryptionKey.setCurrentUserPassword("teste123");
+	val fos = FileOutputStream(xlsxFile)
+	xlWb.write(fos)
 	xlWb.close()
+
+//////////////////////////////
+	val fs = POIFSFileSystem()
+
+	val info =  EncryptionInfo(EncryptionMode.agile)
+	val encryptor = info.encryptor
+	encryptor.confirmPassword("teste123")
+
+	val opc = OPCPackage.open(xlsxFile)
+	val os = encryptor.getDataStream(fs)
+	opc.save(os)
+
+	// Write out the encrypted version
+	val fos2 = FileOutputStream(xlsxFile)
+	fs.writeFilesystem(fos2)
+
+////////////////////////////////////
+
 }
 
 /**
@@ -134,15 +172,10 @@ fun writeToExcelFile(filepath: String, dados: Any) {
 fun readFromExcelFile(filepath: String) {
 	val inputStream = FileInputStream(filepath)
 	//Instantiate Excel workbook using existing file:
-	var xlWb = WorkbookFactory.create(inputStream)
-
-	//Row index specifies the row in the worksheet (starting at 0):
-	val rowNumber = 0
-	//Cell index specifies the column within the chosen row (starting at 0):
-	val columnNumber = 0
+	var xlWb = WorkbookFactory.create(inputStream,"teste123")
+	//var xlWb = WorkbookFactory.create(inputStream,"Password")
 
 	//Get reference to first sheet:
-
 	val xlWs = xlWb.getSheetAt(0)
 
 	//Dimensoes da Planilha
